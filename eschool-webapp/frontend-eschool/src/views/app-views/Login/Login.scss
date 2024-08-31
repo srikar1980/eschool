@@ -1,0 +1,147 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 20px; 
+  background: #5629d0 !important;
+}
+
+.login-container .ant-input-outlined {
+  border: 2px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.login-container .ant-input-outlined:hover,
+.login-container .ant-input-outlined:focus {
+  border-color: #ad95f9 !important;
+}
+
+.login-form {
+  display: flex;
+  background-color: #e5e5e5;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 800px; /* Ensure it doesn't exceed 800px */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-height: 400px;
+
+  @media (max-width: 768px) {
+    flex-direction: column; /* Stack the image and form vertically on small screens */
+  }
+}
+
+.form-image {
+  width: 50%;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 200px; /* Adjust height for mobile */
+  }
+}
+
+.form-content {
+  width: 50%;
+  padding: 32px;
+
+  .title {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 24px;
+  }
+
+  .form-item {
+    margin-bottom: 16px;
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+    }
+  }
+
+  .login-btn {
+    background: #5629d0 !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    outline: none !important;
+    border: none !important;
+
+    &:hover {
+      outline: none !important;
+    }
+  }
+
+  .error-message {
+    color: #ff4d4f;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .additional-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    font-size: 14px;
+
+    .forgot-password,
+    .create-account {
+      cursor: pointer;
+      color: #1890ff;
+    }
+
+    .forgot-password:hover,
+    .create-account:hover {
+      text-decoration: underline;
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 20px;
+  }
+}
+
+.send-btn {
+  background: #5629d0 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  outline: none !important;
+  margin-top: 16px;
+}
+
+// Forgot Password Modal styles
+.forgot-password-modal .ant-modal-content {
+  min-height: 300px; // Adjust this value based on your design requirements
+  display: flex;  
+  gap: 20px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
+  padding: 16px; // Add padding if necessary
+}
+
+.forgot-password-modal .ant-modal-body {
+  width: 100%; // Ensure modal body takes full width
+  
+  .forgot-password-desc{
+    margin-bottom: 20px;
+  }
+
+}
+
+.forgot-password-modal .ant-modal-title {
+  font-size: 24px; // Adjust this value to your desired font size
+}
+
+
+
+
