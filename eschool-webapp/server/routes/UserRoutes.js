@@ -1,102 +1,67 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
-import protect from '../Middleware/AuthMiddleware.js';
-import generateToken from '../utils/generateToken.js';
-import User from '../models/UserModel.js';
+import User from '../models/User.js';
+import { generateToken } from '../utils/generateToken.js';
 
 const userRouter = express.Router();
 
-userRouter.post(
-  '/login',
-  asyncHandler(async (req, res) => {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (user && (await user.matchPassword(password))) {
-      res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        isAdmin: user.isAdmin,
-        token: generateToken(user._id),
-        createdAt: user.createdAt,
-      });
-    } else {
-      res.status(401);
-      throw new Error('Invalid Email or Password');
-    }
-  })
-);
 
-//REGISTER
+// Login route
+userRouter.post('/login', asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  // Find user by email
+  const user = await User.findOne({ email });
+
+  // Check if user exists and the password is correct
+  if (user && (await user.matchPassword(password))) {
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role, // Include role in response
+      isAdmin: user.isAdmin, // Optionally include isAdmin if needed
+      token: generateToken(user._id),
+      createdAt: user.createdAt,
+    });
+  } else {
+    res.status(401);
+    throw new Error('Invalid Email or Password');
+  }
+}));
+
+
+// Registration route
 userRouter.post(
   '/',
-  protect,
   asyncHandler(async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
+
     const userExists = await User.findOne({ email });
+
     if (userExists) {
       res.status(400);
       throw new Error('User already exists!');
     }
-    const user = await User.create({ name, email, password });
+
+    const user = await User.create({
+      name,
+      email,
+      password,
+      role: role || 'student', // Use the provided role or default to 'student'
+    });
     if (user) {
       res.status(201).json({
         _id: user._id,
         name: user.name,
         email: user.email,
+        role: user.role,
         isAdmin: user.isAdmin,
-        token: generateToken(user._id),
+        token: generateToken(user._id), // Generate token here
       });
     } else {
       res.status(400);
-      throw new Error('Invalid User Data');
-    }
-  })
-);
-//PROFILE
-userRouter.get(
-  '/profile',
-  protect,
-  asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id);
-    if (user) {
-      res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        isAdmin: user.isAdmin,
-        createdAt: user.createdAt,
-      });
-    } else {
-      res.status(404);
-      throw new Error('User not found.');
-    }
-  })
-);
-// UPDATE PROFILE
-userRouter.put(
-  '/profile',
-  protect,
-  asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id);
-    if (user) {
-      user.name = req.body.name || user.name;
-      user.email = req.body.email || user.email;
-      if (req.body.password) {
-        user.password = req.body.password;
-      }
-      const updateUser = await user.save();
-      res.json({
-        _id: updateUser._id,
-        name: updateUser.name,
-        email: updateUser.email,
-        isAdmin: updateUser.isAdmin,
-        createdAt: updateUser.createdAt,
-        token: generateToken(updateUser._id),
-      });
-    } else {
-      res.status(404);
-      throw new Error('User not found.');
+      throw new Error('Invalid user data');
     }
   })
 );

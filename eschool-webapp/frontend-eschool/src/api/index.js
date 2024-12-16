@@ -1,13 +1,14 @@
 import axios from 'axios';
 import apiRoutes from './apiRoutes';
-import { getLocalStorage, setLocalStorage } from '@/utils/localStorage';
+import { getLocalStorage,setLocalStorage } from '../utils/localStorage';
 
-const domain = process.env.INVOKE_URL;
+const domain = "http://localhost:5000/api/users";
 
 const axiosInstance = axios.create({
   baseURL: domain,
   timeout: 15000,
 });
+
 
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
@@ -16,6 +17,8 @@ axiosInstance.interceptors.request.use(
       const authorization = getLocalStorage('authorization');
       config.headers['Authorization'] = `${authorization?.accessToken?.token}`;
     }
+
+    //     
     // Do something before request is sent
     // persist the access token, refresh token and refresh token time
     // on api request check the current time and refresh token time diff and if its is < than 3min then
@@ -81,17 +84,42 @@ axiosInstance.interceptors.response.use(
   },
 );
 
-
-
-const postAPIRequest = (route, data, customHeaders = undefined) => {
+const getAPIRequest = (route, customHeaders = undefined) => {
   let url = domain + route;
   let headers = customHeaders ?? undefined;
-  return axiosInstance.post(url, data, headers);
+  return axiosInstance.get(url, headers);
+};
+
+// const postAPIRequest = (route, data, customHeaders = undefined) => {
+//   let url = domain + route;
+//   let headers = customHeaders ?? undefined;
+//   return axiosInstance.post(url, data, headers);
+// };
+
+const postAPIRequest = (route, data, customHeaders = {}) => {
+  let url = domain + route;
+  // Ensure headers is an object and merge customHeaders
+  let headers = { ...customHeaders };
+  
+  return axiosInstance.post(url, data, { headers });
 };
 
 
+const putAPIRequest = (route, data, customHeaders = undefined) => {
+  let url = domain + route;
+  let headers = customHeaders ?? undefined;
+  return axiosInstance.put(url, data, headers);
+};
+
+const deleteAPIRequest = (route, data) => {
+  let url = domain + route;
+  return axiosInstance.delete(url, data);
+};
 
 export {
   apiRoutes,
+  getAPIRequest,
   postAPIRequest,
+  putAPIRequest,
+  deleteAPIRequest,
 };

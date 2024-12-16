@@ -1,6 +1,7 @@
 export const apiRoutes = {
-  /** Login Page */
-  staffAPIRoutes: { url: '/user/login', method: 'GET' },
+ /** Login Page */
+ login: { url: '/login', method: 'POST' },
+ logout: { url: '/logout', method: 'POST' },
 
 
 

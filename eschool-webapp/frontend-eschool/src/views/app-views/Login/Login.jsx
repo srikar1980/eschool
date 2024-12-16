@@ -1,19 +1,29 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Input, Button, Modal, Checkbox } from 'antd';
-import LoginFormImg from "../../../assets/login-form-bg.jpg";
+import LoginFormImg from '../../../assets/login-form-bg.jpg';
 import './Login.scss';
+import { login } from '../../../redux/reducers/userReducer';
+import ButtonLoader from '../../../components/UI/ButtonLoader';
 
 const schema = yup.object().shape({
-  email: yup.string().email('Invalid email').required('Please input your email!'),
+  email: yup
+    .string()
+    .email('Invalid email')
+    .required('Please input your email!'),
   password: yup.string().required('Please input your password!'),
 });
 
 const registerSchema = yup.object().shape({
   name: yup.string().required('Please input your name!'),
-  email: yup.string().email('Invalid email').required('Please input your email!'),
+  email: yup
+    .string()
+    .email('Invalid email')
+    .required('Please input your email!'),
   phoneNumber: yup.string().required('Please input your phone number!'),
   schoolName: yup.string().required('Please input your school name!'),
   location: yup.string().required('Please input your location!'),
@@ -22,18 +32,36 @@ const registerSchema = yup.object().shape({
 });
 
 const Login = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  // const { loading, error, success, userInfo } = useSelector(authStateSelector);
 
-  const { control, handleSubmit, formState: { errors } } = useForm({
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const { control: registerControl, handleSubmit: handleRegisterSubmit, formState: { errors: registerErrors } } = useForm({
+  const {
+    control: registerControl,
+    handleSubmit: handleRegisterSubmit,
+    formState: { errors: registerErrors },
+  } = useForm({
     resolver: yupResolver(registerSchema),
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const handleLogin = async (data) => {
+    setLoading(true);
+    const resultAction = await dispatch(login(data));
+    if (login.fulfilled.match(resultAction)) {
+      setLoading(false);
+      navigate('/app/dashboard');
+    }
   };
 
   const onRegisterSubmit = (data) => {
@@ -58,7 +86,7 @@ const Login = () => {
         </div>
         <div className="form-content">
           <h1 className="title">Login</h1>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(handleLogin)}>
             <div className="form-item">
               <label>Email</label>
               <Controller
@@ -72,7 +100,9 @@ const Login = () => {
                   />
                 )}
               />
-              {errors.email && <p className="error-message">{errors.email.message}</p>}
+              {errors.email && (
+                <p className="error-message">{errors.email.message}</p>
+              )}
             </div>
             <div className="form-item">
               <label>Password</label>
@@ -87,10 +117,12 @@ const Login = () => {
                   />
                 )}
               />
-              {errors.password && <p className="error-message">{errors.password.message}</p>}
+              {errors.password && (
+                <p className="error-message">{errors.password.message}</p>
+              )}
             </div>
-            <Button className='login-btn' htmlType="submit" block>
-              Log in
+            <Button className="login-bn" htmlType="submit" block>
+              {loading? <ButtonLoader/>:"LogIn"}
             </Button>
             <div className="additional-links">
               <span className="forgot-password" onClick={showRegisterModal}>
@@ -123,7 +155,9 @@ const Login = () => {
                 />
               )}
             />
-            {registerErrors.name && <p className="error-message">{registerErrors.name.message}</p>}
+            {registerErrors.name && (
+              <p className="error-message">{registerErrors.name.message}</p>
+            )}
           </div>
           <div className="form-item">
             <label>Email</label>
@@ -138,7 +172,9 @@ const Login = () => {
                 />
               )}
             />
-            {registerErrors.email && <p className="error-message">{registerErrors.email.message}</p>}
+            {registerErrors.email && (
+              <p className="error-message">{registerErrors.email.message}</p>
+            )}
           </div>
           <div className="form-item">
             <label>Phone Number</label>
@@ -153,7 +189,11 @@ const Login = () => {
                 />
               )}
             />
-            {registerErrors.phoneNumber && <p className="error-message">{registerErrors.phoneNumber.message}</p>}
+            {registerErrors.phoneNumber && (
+              <p className="error-message">
+                {registerErrors.phoneNumber.message}
+              </p>
+            )}
           </div>
           <div className="form-item">
             <label>School Name</label>
@@ -168,7 +208,11 @@ const Login = () => {
                 />
               )}
             />
-            {registerErrors.schoolName && <p className="error-message">{registerErrors.schoolName.message}</p>}
+            {registerErrors.schoolName && (
+              <p className="error-message">
+                {registerErrors.schoolName.message}
+              </p>
+            )}
           </div>
           <div className="form-item">
             <label>Location</label>
@@ -183,7 +227,9 @@ const Login = () => {
                 />
               )}
             />
-            {registerErrors.location && <p className="error-message">{registerErrors.location.message}</p>}
+            {registerErrors.location && (
+              <p className="error-message">{registerErrors.location.message}</p>
+            )}
           </div>
           <div className="form-item">
             <label>School Strength</label>
@@ -199,7 +245,11 @@ const Login = () => {
                 />
               )}
             />
-            {registerErrors.schoolStrength && <p className="error-message">{registerErrors.schoolStrength.message}</p>}
+            {registerErrors.schoolStrength && (
+              <p className="error-message">
+                {registerErrors.schoolStrength.message}
+              </p>
+            )}
           </div>
           <div className="form-item">
             <Controller
@@ -211,9 +261,11 @@ const Login = () => {
                 </Checkbox>
               )}
             />
-            {registerErrors.tnc && <p className="error-message">{registerErrors.tnc.message}</p>}
+            {registerErrors.tnc && (
+              <p className="error-message">{registerErrors.tnc.message}</p>
+            )}
           </div>
-          <Button className='register-btn' htmlType="submit" block>
+          <Button className="register-btn" htmlType="submit" block>
             Register
           </Button>
         </form>

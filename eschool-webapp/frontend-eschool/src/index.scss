@@ -469,3 +469,12 @@ header {
   margin-left: auto;
 }
 
+.button-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.button-loader img {
+  width: 100px;
+  height: 30px;
+}
